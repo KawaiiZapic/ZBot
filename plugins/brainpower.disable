@@ -1,0 +1,20 @@
+<?php
+class brainpower_class{
+    public function onActive(){}
+    public function onTick(){}
+    public function onMessage($msg){
+        if($msg->message=="Let the bass kick"){
+             $r = new respond();
+             $r->data = json_encode([
+                 "action"=>".handle_quick_operation",
+                 "params"=>[
+                      "context"=>$msg,
+                      "operation"=>["at_sender"=>false,"reply"=>"O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A- JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA"]
+                 ]
+             ]);
+             return $r;
+        }
+        return true;
+    }
+
+}

@@ -1,0 +1,41 @@
+<?php
+class ljyysgun_class {
+    public $time = 0;
+    public $inval = 30;
+    public function onActive(){}
+    public function onTick(){}
+    public function onMessage($msg){
+        $subljyys = 2823766753;
+        if($msg->user_id == $subljyys){
+            $this->lastsub = time();
+            $r = true;
+            if(time()-$this->lastsub> 64800){
+                 $r = new respond();
+                 $r->data = json_encode([
+                     "action"=>".handle_quick_operation",
+                     "params"=>[
+                          "context"=>$msg,
+                          "operation"=>["at_sender"=>false,"reply"=>"屑yys又在用小号了"]
+                     ]
+                 ]);
+            }
+            return $r;
+        }
+        $ljyys = 1418780411;
+//$ljyys=577358285;
+        if(time() - $this->time < $this->inval || $msg->user_id!=$ljyys){return true;}
+        if(preg_match("/^(请问|有人|看到|可爱的|Akashi|极光|了么|了吗)+$/",$msg->message) ){
+            $this->time = time();
+            $r = new respond();
+            $r->data = json_encode([
+                 "action"=>".handle_quick_operation",
+                 "params"=>[
+                      "context"=>$msg,
+                      "operation"=>["at_sender"=>false,"reply"=>"没有,滚"]
+                 ]
+             ]);
+             return $r;
+        }
+        return true;
+    }
+}

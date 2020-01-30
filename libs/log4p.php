@@ -1,5 +1,5 @@
-<?php define("LOG_LEVEL_INFO", 1); define("LOG_LEVEL_NOTICE", 2); define("LOG_LEVEL_WARN", 3); define("LOG_LEVEL_ERROR", 4); 
-define("LOG_LEVEL_DEBUG", 0); class log4p {
+<?php define("LOG_LEVEL_INFO", 1); define("LOG_LEVEL_NOTICE", 2); define("LOG_LEVEL_WARN", 3); define("LOG_LEVEL_ERROR", 4); define("LOG_LEVEL_DEBUG", 0); 
+class log4p {
     private $file;
     private $file_f;
     private $display_level;
@@ -7,8 +7,7 @@ define("LOG_LEVEL_DEBUG", 0); class log4p {
         if (is_null($file)) {
             !file_exists("logs") ? mkdir("logs") : null;
             $i=1;
-            while(file_exists("logs/" . date("Y-m-d") . 
-"-{$i}.log")){
+            while(file_exists("logs/" . date("Y-m-d") . "-{$i}.log")){
                 $i++;
             }
             $this->file = "logs/" . date("Y-m-d") . "-{$i}.log";
@@ -21,31 +20,25 @@ define("LOG_LEVEL_DEBUG", 0); class log4p {
         set_error_handler (array(&$this,"err_repo_handler"));
         set_exception_handler(array(&$this,"exp_handler"));
     }
-    public function err_repo_handler($errno, $errstr, $errfile, 
-$errline){
+    public function err_repo_handler($errno, $errstr, $errfile, $errline){
         switch ($errno) {
             case E_USER_ERROR:
-                $this->log("{$errstr} in 
-{$errfile}:{$errline}",LOG_LEVEL_ERROR);
+                $this->log("{$errstr} in {$errfile}:{$errline}",LOG_LEVEL_ERROR);
                 return false;
             case E_USER_WARNING:
-                $this->log("{$errstr} in 
-{$errfile}:{$errline}",LOG_LEVEL_WARN);
+                $this->log("{$errstr} in {$errfile}:{$errline}",LOG_LEVEL_WARN);
                 break;
             case E_USER_NOTICE:
-                $this->log("{$errstr} in 
-{$errfile}:{$errline}",LOG_LEVEL_NOTICE);
+                $this->log("{$errstr} in {$errfile}:{$errline}",LOG_LEVEL_NOTICE);
                 break;
             default:
-                $this->log("{$errstr} in 
-{$errfile}:{$errline}",LOG_LEVEL_WARN);
+                $this->log("{$errstr} in {$errfile}:{$errline}",LOG_LEVEL_WARN);
                 break;
         }  
         return true;
     }
     public function exp_handler($exp){
-        $this->log("Uncaught Exception 
-occurred:{$exp->getMessage()}.\n{$exp->getTraceAsString()}",LOG_LEVEL_ERROR);
+        $this->log("Uncaught Exception occurred:{$exp->getMessage()}.\n{$exp->getTraceAsString()}",LOG_LEVEL_ERROR);
     }
     public function log($msg, $type = LOG_LEVEL_INFO) {
         $resetcolor = $color = chr(27).'[0m';
