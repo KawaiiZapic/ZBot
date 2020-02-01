@@ -113,11 +113,11 @@ class Main {
         if (!property_exists($data, "post_type")) {
             $this->respondHandler($serv,$id, $data);
         } else {
-            $head = $this->_config->head_need_replace ? "\\".$this->_config->command_head : $this->_config->command_head;
+            $head = $this->_config->command_head == "/" ? "\/" : quotemeta($this->_config->command_head);
             if(property_exists($data,"message")){
                 $data->message = html_entity_decode($data->message);
                 if(preg_match("/^{$head}(.+)\$/",$data->message,$match)){
-		            $this->_logger->log("{$data->user_id} executed command {$data->message}");	
+                    $this->_logger->log("{$data->user_id} executed command {$data->message}");
 		            $com = explode(" ",$match[1]);
                     if(count($com) <= 0){
                         $com = [$match[1]];

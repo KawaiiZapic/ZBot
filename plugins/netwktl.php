@@ -60,6 +60,7 @@ class netwktl_class{
                 break;
                 case "nslookup":
                     if(count($args) < 2){
+                        $head = $this->_serv->getCommandHead();
                         $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"Network Tool(v0.1-beta):\n{$head}netwktl nslookup <host> [type] 查询指定域名的记录,不指定类型则尝试查询全部."]);
                     break;
                     }
@@ -153,6 +154,7 @@ class netwktl_class{
                 break;
                 case "ping":
                     if(count($args) < 2){
+                        $head = $this->_serv->getCommandHead();
                         $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"Network Tool(v0.1-beta):\n{$head}netwktl ping <host> [timeout] Ping指定的服务器并返回延迟."]);
                     break;
                     }
@@ -178,10 +180,18 @@ class netwktl_class{
                         $m = "\nPING: Network unreachable.";
                     }
                     $this->_serv->getClientByID($id)->qreply($msg,["reply"=>$m]);
+                break;
+                case "mcsinfo":
+                    if(count($args) < 2){
+                        $head = $this->_serv->getCommandHead();
+                        $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"Network Tool(v0.1-beta):\n{$head}netwktl mcsinfo <host> [srv=false] [port=25565] 查看指定Minecraft服务器的状态."]);
+                    break;
+                    }
+                break;
                 case "help":
                     if(count($args)<3 || count($args) > 12){
                         $head = $this->_serv->getCommandHead();
-                        $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"Network Tool(v0.1-beta):\n{$head}netwktl pscan <host> <port1> <port2> ... <port10> 扫描目标主机的端口开放状态,最多10个端口.\n{$head}netwktl nslookup <host> [type] 查询指定域名的记录,不指定类型则尝试查询全部.\n{$head}netwktl ping <host> [timeout] Ping指定的服务器并返回延迟."]);
+                        $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"Network Tool(v0.1-beta):\n{$head}netwktl pscan <host> <port1> <port2> ... <port10> 扫描目标主机的端口开放状态,最多10个端口.\n{$head}netwktl nslookup <host> [type] 查询指定域名的记录,不指定类型则尝试查询全部.\n{$head}netwktl ping <host> [timeout] Ping指定的服务器并返回延迟.\n{$head}netwktl help 显示本帮助."]);
                     break;
                     }
                 break;
