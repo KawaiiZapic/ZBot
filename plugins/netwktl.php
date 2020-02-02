@@ -1,7 +1,7 @@
 <?php
 class netwktl_class{
     private $_serv;
-    public function onActive($s){
+    public function onActive(&$s){
         $this->_serv = $s;
         $s->getLogger()->log("[Network Tool] Plugin actived!");
     }

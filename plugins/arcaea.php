@@ -1,7 +1,7 @@
 <?php
 class arcaea_class {
     private $_server;
-    public function onActive($sv) {
+    public function onActive(&$sv) {
         if (!file_exists("./plugins/arcaea")) {
             mkdir("./plugins/arcaea");
         }
@@ -12,6 +12,7 @@ class arcaea_class {
             file_put_contents("./plugins/arcaea/accounts.json", json_encode($d));
         }
         $this->_server = $sv;
+        $this->_server->getLogger()->log('[Arcaea SS] Plugin actived!');
     }
     public function onCommand($id, $cmd, $args, $msg) {
         if ($cmd == "arcaea") {

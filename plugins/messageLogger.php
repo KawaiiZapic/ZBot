@@ -4,7 +4,7 @@ class messageLogger_class{
     private $_serv;
     private $_logger;
 
-    public function onActive($s){
+    public function onActive(&$s){
         $this->_serv = $s;
         $this->_logger = $s->getLogger();
     }

@@ -115,14 +115,8 @@ class Main {
         } else {
             $head = $this->_config->command_head == "/" ? "\/" : quotemeta($this->_config->command_head);
             if(property_exists($data,"message")){
-                $data->message = html_entity_decode($data->message);
                 if(preg_match("/^{$head}(.+)\$/",$data->message,$match)){
-                    $this->_logger->log("{$data->user_id} executed command {$data->message}");
-		            $com = explode(" ",$match[1]);
-                    if(count($com) <= 0){
-                        $com = [$match[1]];
-                    }
-                    $this->commandHandler($serv,$id,$com,$data);
+                    $this->commandHandler($serv,$id,$match,$data);
                 }else{
                     $this->eventHandler($serv, $id,$data);
                 }
@@ -223,7 +217,13 @@ class Main {
         $this->_responds[$echo] = $data;
     }
 
-    private function commandHandler($serv,$id,$com,$data){
+    private function commandHandler($serv,$id,$match,$data){
+        //$data->message = html_entity_decode($data->message);
+        $this->_logger->log("{$data->user_id} executed command {$data->message}");
+		$com = explode(" ",$match[1]);
+        if(count($com) <= 0){
+            $com = [$match[1]];
+        }
         $command = $com[0];
         unset($com[0]);
         $args = [];
@@ -252,7 +252,7 @@ class Main {
     private function pluginsTrigger($func) {
         $args = func_get_args();
         for ($i = 1; $i < count($args); $i++) {
-            $arr[] = $args[$i];
+            $arr[] = &$args[$i];
         }
         foreach ($this->_plugins as $name => $plugin) {
             if (method_exists($plugin, $func)) {
@@ -289,7 +289,6 @@ class Main {
                     $pl = new $class();
                     $level = property_exists($pl, "_level") ? (is_numeric($pl->_level) ? $pl->_level : 100) : 100;
                     $plugins[$level][$m[1]] = $pl;
-                    method_exists($pl, "onActive") ? $pl->onActive($this) : null;
                 } catch (Error | Exception | ParseError $e) {
                     $this->_logger->log("Unable to load plugin \"{$m[1]}\".", LOG_LEVEL_ERROR);
                     $this->_logger->log($e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString(), LOG_LEVEL_ERROR);
@@ -303,6 +302,7 @@ class Main {
             }
         }
         $this->_plugins = $_plugins;
+        $this->pluginsTrigger("onActive",$this);
     }
 
     /**

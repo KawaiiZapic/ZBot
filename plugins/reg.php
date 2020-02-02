@@ -1,8 +1,8 @@
 <?php
 class reg_class{
     private $_serv;
-    public function onActive($s){
-        $this->_serv = &$s;
+    public function onActive(&$s){
+        $this->_serv = $s;
         $s->getLogger()->log("[Regex Tester] Plugin actived!");
     }
     public function onCommand($id,$cmd,$args,$msg){

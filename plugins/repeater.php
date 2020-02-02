@@ -4,11 +4,11 @@ class repeater_class{
     private $_repeat;
     private $_repeattime = 3;
     private $_logger;
-    public function onActive($s){
+    public function onActive(&$s){
         $this->_serv = $s;
         $this->_repeat = new class{};
         $this->_logger = $this->_serv->getLogger();
-        $this->_logger->log('[Repeater] Plugin Active!');
+        $this->_logger->log('[Repeater] Plugin actived!');
     }
     public function onGroupMessage($id,$msg){
         $group = $msg->group_id;
