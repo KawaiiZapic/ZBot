@@ -111,7 +111,7 @@ class arcaea_class {
                 $this->_server->getClientByID($id)->qreply($msg, ["reply" => "\n暂时未能获取到最近游玩信息,请稍后再试."]);
                 return true;
             }
-            $m = $this->createInfoText($info);
+            $m = $this->createInfoText($info[1]);
             $this->_server->getClientByID($id)->qreply($msg, ["reply" => "\n{$m}"]);
         }
     }
@@ -135,7 +135,7 @@ class arcaea_class {
         return property_exists($data->by_qq, $aid) ? $data->by_qq->$aid->qq : false;
     }
 
-    private function getUserinfoById($id) {
+    private function getUserinfoById($id,$deep = 2) {
         $cli = new Co\http\Client("arc.estertion.win", 616, true);
         $ret = $cli->upgrade("/");
         if (!$ret) {return false;}
@@ -158,21 +158,21 @@ class arcaea_class {
     }
 
     public function createInfoText($info) {
-        $nick = $info[1]->data->name;
-        $songid = $info[1]->data->recent_score[0]->song_id;
+        $nick = $info->data->name;
+        $songid = $info->data->recent_score[0]->song_id;
         $song = property_exists($info[0]->data->$songid, "jp") ? $info[0]->data->$songid->jp : $info[0]->data->$songid->en;
-        $score = $info[1]->data->recent_score[0]->score;
-        $pure = $info[1]->data->recent_score[0]->perfect_count;
-        $spure = $info[1]->data->recent_score[0]->shiny_perfect_count;
-        $far = $info[1]->data->recent_score[0]->near_count;
-        $lost = $info[1]->data->recent_score[0]->miss_count;
-        $cleartype = $info[1]->data->recent_score[0]->clear_type;
-        $play_ptt = round($info[1]->data->recent_score[0]->rating, 2);
+        $score = $info->data->recent_score[0]->score;
+        $pure = $info->data->recent_score[0]->perfect_count;
+        $spure = $info->data->recent_score[0]->shiny_perfect_count;
+        $far = $info->data->recent_score[0]->near_count;
+        $lost = $info->data->recent_score[0]->miss_count;
+        $cleartype = $info->data->recent_score[0]->clear_type;
+        $play_ptt = round($info->data->recent_score[0]->rating, 2);
         $recenttime = $this->second2duration(time() - round($info[1]->data->recent_score[0]->time_played / 1000));
-        $diffl = $info[1]->data->recent_score[0]->difficulty;
-        $diffc = $info[1]->data->recent_score[0]->constant;
-        $ptt = $info[1]->data->rating / 100;
-        $aid = $info[1]->data->user_code;
+        $diffl = $info->data->recent_score[0]->difficulty;
+        $diffc = $info->data->recent_score[0]->constant;
+        $ptt = $info->data->rating / 100;
+        $aid = $info->data->user_code;
         switch ($diffl) {
         case 0:
             $diffl = "Past";
@@ -207,14 +207,14 @@ class arcaea_class {
         default:
             $cleartype = "Unknown";
         }
-        $msg = "用户名: {$nick}\nArcaea ID: {$aid}\nPTT: {$ptt}\n最近一次游玩:\n    时间: {$recenttime}前\n    歌曲: {$song}\n    难度: {$diffl}({$diffc})\n    分数: {$score} ({$cleartype})\n    游玩结果: {$play_ptt}\n    Pure: {$pure} (+{$spure})\n    Far: {$far}\n    Lost: {$lost}";
+        $msg = "用户名: {$nick}\nArcaea ID: {$aid}\nPTT: {$ptt}\n最近一次游玩:\n    时间: {$recenttime}\n    歌曲: {$song}\n    难度: {$diffl}({$diffc})\n    分数: {$score} ({$cleartype})\n    游玩结果: {$play_ptt}\n    Pure: {$pure} (+{$spure})\n    Far: {$far}\n    Lost: {$lost}";
         return $msg;
     }
     public function second2duration($seconds) {
         $duration = '';
         $seconds = (int) $seconds;
         if ($seconds <= 0) {
-            return $duration;
+            return "刚刚";
         }
         list($day, $hour, $minute, $second) = explode(' ', gmstrftime('%j %H %M %S', $seconds));
         $day -= 1;
@@ -230,6 +230,6 @@ class arcaea_class {
         if ($second > 0) {
             $duration .= (int) $second . '秒';
         }
-        return $duration;
+        return $duration."前";
     }
 }

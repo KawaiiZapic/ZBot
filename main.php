@@ -107,7 +107,9 @@ class Main {
      *
      */
     private function frameHandler($serv, $frame) {
-        $this->pluginsTrigger("onFrameRecive", $frame);
+        if(!$this->pluginsTrigger("onFrameRecive", $frame)){
+            return false;
+        }
         $data = json_decode($frame->data);
         $fd = $frame->fd;
         $id = $this->_clients->by_fd[$fd]['id'];
@@ -137,19 +139,17 @@ class Main {
      *
      */
     private function eventHandler($serv, $id, $data) {
-        $this->pluginsTrigger("onEvent", $id,$data);
+        if(!$this->pluginsTrigger("onEvent", $id,$data)) return false;
         switch ($data->post_type) {
         case "message":
-            $this->pluginsTrigger("onMessage",$id, $data);
+            if(!$this->pluginsTrigger("onMessage",$id, $data)) return false;
             switch ($data->message_type) {
             case "private":
                 $this->pluginsTrigger("onPrivateMessage",$id, $data);
                 break;
-
             case "group":
                 $this->pluginsTrigger("onGroupMessage",$id, $data);
                 break;
-
             case "discuss":
                 $this->pluginsTrigger("onDiscussMessage", $id,$data);
                 break;
@@ -157,28 +157,23 @@ class Main {
             break;
 
         case "notice":
-            $this->pluginsTrigger("onNotice",$id, $data);
+            if(!$this->pluginsTrigger("onNotice",$id, $data)) return false;
             switch ($data->notice_type) {
             case "group_upload":
                 $this->pluginsTrigger("onGroupUpload", $id,$data);
                 break;
-
             case "group_admin":
                 $this->pluginsTrigger("onGroupAdmin",$id, $data);
                 break;
-
             case "group_decrease":
                 $this->pluginsTrigger("onGroupDecrease",$id, $data);
                 break;
-
             case "group_increase":
                 $this->pluginsTrigger("onGroupIncrease",$id, $data);
                 break;
-
             case "group_ban":
                 $this->pluginsTrigger("onGroupBan",$id, $data);
                 break;
-
             case "friend_add":
                 $this->pluginsTrigger("onFriendAdd",$id, $data);
                 break;
@@ -186,12 +181,11 @@ class Main {
             break;
 
         case "request":
-            $this->pluginsTrigger("onRequest",$id, $data);
+            if(!$this->pluginsTrigger("onRequest",$id, $data)) return false;
             switch ($data->request_type) {
             case "friend":
                 $this->pluginsTrigger("onFriendRequest",$id, $data);
                 break;
-
             case "group":
                 $this->pluginsTrigger("onGroupRequest", $id,$data);
                 break;
@@ -210,7 +204,9 @@ class Main {
      *
      */
     private function respondHandler($serv, $id,$data) {
-        $this->pluginsTrigger("onRespond",$id, $data);
+        if(!$this->pluginsTrigger("onRespond",$id, $data)){
+            return false;
+        }
         if (!property_exists($data, "echo")) {
             return false;
         }
@@ -231,7 +227,9 @@ class Main {
         foreach($com as $a){
             $args[] = $a;
         }
-        $this->pluginsTrigger("onCommand",$id,$command,$args,$data);
+        if(!$this->pluginsTrigger("onCommand",$id,$command,$args,$data)){
+            return false;
+        }
     }
     /**
      * 循环Tick处理
@@ -239,7 +237,9 @@ class Main {
      * @return null
      */
     private function tickHandler() {
-        $this->pluginsTrigger("onTick");
+        if(!$this->pluginsTrigger("onTick")){
+            return false;
+        }
     }
 
     /**
