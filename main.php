@@ -2,6 +2,7 @@
 print_r("Zapic's bot backend v0.0.1,Now loading libraries...\n");
 require_once "./libs/log4p.php";
 require_once "./libs/clientbot.php";
+require_once "./libs/cmdexplainer.php";
 class Main {
     private $_server;
     private $_config;
@@ -118,7 +119,7 @@ class Main {
         } else {
             $head = $this->_config->command_head == "/" ? "\/" : quotemeta($this->_config->command_head);
             if(property_exists($data,"message")){
-                if(preg_match("/^{$head}(.+)\$/",$data->message,$match)){
+                if(preg_match("/^{$head}([\s\S]+)\$/",$data->message,$match)){
                     $this->commandHandler($serv,$id,$match,$data);
                 }else{
                     $this->eventHandler($serv, $id,$data);
@@ -217,18 +218,14 @@ class Main {
     private function commandHandler($serv,$id,$match,$data){
         //$data->message = html_entity_decode($data->message);
         $this->_logger->log("{$data->user_id} executed command {$data->message}");
-		$com = explode(" ",$match[1]);
-        if(count($com) <= 0){
-            $com = [$match[1]];
-        }
-        $command = $com[0];
-        unset($com[0]);
-        $args = [];
-        foreach($com as $a){
-            $args[] = $a;
-        }
-        if(!$this->pluginsTrigger("onCommand",$id,$command,$args,$data)){
+        $com = new Command($match[1]);
+        if(!$com){
             return false;
+        }
+        $command = $com->getCommand();
+        $args = $com->getAllArgs();
+        if(!$this->pluginsTrigger("onCommand",$id,$command,$args,$data)){
+            return true;
         }
     }
     /**
