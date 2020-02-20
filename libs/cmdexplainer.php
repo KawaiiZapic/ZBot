@@ -73,4 +73,3 @@ class Command {
         return $this->raw;
     }
 }
-//var_dump(new Command("'"));

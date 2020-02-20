@@ -62,6 +62,8 @@ class arcaea_class {
                 if (isset($args[1])) {
                     if (preg_match('/^\[CQ:at,qq=(\d*)\]$/', $args[1], $matchs)) {
                         $aid = $this->getArcId($matchs[1]);
+                    } elseif(preg_match('/^[0-9]{9}$/',$args[1])){
+                        $aid = $args[1];
                     } else {
                         $head = $this->_server->getCommandHead();
                         $this->_server->getClientByID($id)->qreply($msg, ["reply" => "\nArcaea Score Searcher(v0.1-beta):\n{$head}arcaea recent [@someone]({$head}recent [@someone]) 查询某人或者自己最近一次游玩记录."]);
@@ -98,6 +100,8 @@ class arcaea_class {
                 if (isset($args[1])) {
                     if (preg_match('/^\[CQ:at,qq=(\d*)\]$/', $args[1], $matchs)) {
                         $aid = $this->getArcId($matchs[1]);
+                    }  elseif(preg_match('/^[0-9]{9}$/',$args[1])){
+                        $aid = $args[1];
                     } else {
                         $head = $this->_server->getCommandHead();
                         $this->_server->getClientByID($id)->qreply($msg, ["reply" => "\nArcaea Score Searcher(v0.1-beta):\n{$head}arcaea pttrecord [@someone] 查询某人或者自己的PTT记录."]);
@@ -147,6 +151,8 @@ class arcaea_class {
             if (isset($args[0])) {
                 if (preg_match('/^\[CQ:at,qq=(\d*)\]$/', $args[0], $matchs)) {
                     $aid = $this->getArcId($matchs[1]);
+                }  elseif(preg_match('/^[0-9]{9}$/',$args[0])){
+                    $aid = $args[0];
                 } else {
                     $this->_server->getClientByID($id)->qreply($msg, ["reply" => "\nArcaea Score Searcher(v0.1-beta):\n{$head}arcaea recent [@someone]({$head}recent [@someone]) 查询某人或者自己最近一次游玩记录."]);
                     return true;
