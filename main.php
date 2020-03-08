@@ -34,7 +34,11 @@ class Main {
             $this->connectHandler($server, $request);
         });
         $this->_server->on('message', function (Swoole\WebSocket\Server $server, $frame) {
-            $this->frameHandler($server, $frame);
+            try{
+                $this->frameHandler($server, $frame);
+            }catch(Exception $e){
+                print_r($e->getMessage());
+            }
         });
         $this->_server->on('close', function ($ser, $fd) {
             $this->closeHandler($ser, $fd);
@@ -254,7 +258,12 @@ class Main {
         }
         foreach ($this->_plugins as $name => $plugin) {
             if (method_exists($plugin, $func)) {
-                $r = call_user_func_array([$plugin, $func], $arr);
+                try {
+                    $r = call_user_func_array([$plugin, $func], $arr);
+                }catch(Exception | Error $e){
+                    $this->_logger->log("Error occuring when try to call {$func} on plugin.");
+                    $this->_logger->log($e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString(), LOG_LEVEL_ERROR);
+                }
                 if ($r === false) {return false;}
             }
         }

@@ -20,7 +20,6 @@ class netwktl_class{
                     $host = $args[1];
                     $ports = $args;
                     unset($ports[0],$ports[1]);
-                    $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
                     $result = [];
                     $this->_serv->getClientByID($id)->qreply($msg,["reply"=>"\n正在扫描..."]);
                     foreach($ports as $port){
@@ -28,6 +27,7 @@ class netwktl_class{
                             $result[] = ["port"=>$port,"result"=>"无效端口"];
                             continue;
                         }
+                        $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
                         $client->connect($host,$port,5);
                         switch($client->errCode){
                             case 0:
@@ -140,10 +140,14 @@ class netwktl_class{
                                 $rc = "cpu={$re['cpu']};os={$re['os']}";
                                 $p = "无";
                             break;
+                            case "SRV":
+                                $rc = "{$re['pri']} {$re['weight']} {$re['port']} {$re['target']}";
+                                $p = $p = $re['pri'];
+                            break;
                             default:
                             continue 2;
                         }
-                        $m .="\n类型:{$t} 值:{$rc} 权重:{$p} TTL:{$ttl}";
+                        $m .="\n类型:{$t} 值:{$rc} 优先级:{$p} TTL:{$ttl}";
                     }
                     $et = round((microtime(true)*1000 - $st) ,2);
                     if(count($r)<=0){
