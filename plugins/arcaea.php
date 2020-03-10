@@ -4,7 +4,7 @@ class arcaea_class {
     private $_songlist;
     private $_datadir;
     public function onActive(&$sv) {
-        $this->_datadir = $sv->getMainDir()."/arcaea";
+        $this->_datadir = $sv->getMainDir()."/data/arcaea";
         if (!file_exists($this->_datadir)) {
             mkdir($this->_datadir);
         }

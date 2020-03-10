@@ -5,7 +5,7 @@ class botblocker_class {
     public $_level = 99999;
     private $_datadir;
     public function onActive(&$sv) {
-        $this->_datadir = $sv->getMainDir()."/botblocker";
+        $this->_datadir = $sv->getMainDir()."/data/botblocker";
         if (!file_exists($this->_datadir."")) {
             mkdir($this->_datadir."");
         }
