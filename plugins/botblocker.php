@@ -3,16 +3,18 @@ class botblocker_class {
     private $_server;
     private $_blocks;
     public $_level = 99999;
+    private $_datadir;
     public function onActive(&$sv) {
-        if (!file_exists("./plugins/botblock")) {
-            mkdir("./plugins/botblock");
+        $this->_datadir = $sv->getMainDir()."/botblocker";
+        if (!file_exists($this->_datadir."")) {
+            mkdir($this->_datadir."");
         }
-        if (!file_exists("./plugins/botblock/blocks.json")) {
+        if (!file_exists($this->_datadir."/blocks.json")) {
             $d = [];
-            file_put_contents("./plugins/botblock/blocks.json", json_encode($d));
+            file_put_contents($this->_datadir."/blocks.json", json_encode($d));
         }
         $this->_server = $sv;
-        $this->_blocks = json_decode(file_get_contents("./plugins/botblock/blocks.json"),true);
+        $this->_blocks = json_decode(file_get_contents($this->_datadir."/blocks.json"),true);
         $this->_server->getLogger()->log('[Bot blocker] Plugin actived!');
     }
 

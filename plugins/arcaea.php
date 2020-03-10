@@ -2,15 +2,17 @@
 class arcaea_class {
     private $_server;
     private $_songlist;
+    private $_datadir;
     public function onActive(&$sv) {
-        if (!file_exists("./plugins/arcaea")) {
-            mkdir("./plugins/arcaea");
+        $this->_datadir = $sv->getMainDir()."/arcaea";
+        if (!file_exists($this->_datadir)) {
+            mkdir($this->_datadir);
         }
-        if (!file_exists("./plugins/arcaea/accounts.json")) {
+        if (!file_exists($this->_datadir."/accounts.json")) {
             $d = new class {public $by_qq;public $by_aid;};
             $d->by_qq = new class {};
             $d->by_aid = new class {};
-            file_put_contents("./plugins/arcaea/accounts.json", json_encode($d));
+            file_put_contents($this->_datadir."/accounts.json", json_encode($d));
         }
         $this->_server = $sv;
         $this->_server->getLogger()->log('[Arcaea SS] Plugin actived!');
@@ -184,21 +186,21 @@ class arcaea_class {
     }
 
     public function addArcId($aid, $qq) {
-        $data = json_decode(file_get_contents("./plugins/arcaea/accounts.json"));
+        $data = json_decode(file_get_contents($this->_datadir."/accounts.json"));
         $data->by_aid->$aid = new class {};
         $data->by_aid->$aid->qq = $qq;
         $data->by_qq->$qq = new class {};
         $data->by_qq->$qq->aid = $aid;
-        file_put_contents('./plugins/arcaea/accounts.json', json_encode($data));
+        file_put_contents($this->_datadir.'/accounts.json', json_encode($data));
     }
 
     public function getArcId($qq) {
-        $data = json_decode(file_get_contents("./plugins/arcaea/accounts.json"));
+        $data = json_decode(file_get_contents($this->_datadir."/accounts.json"));
         return property_exists($data->by_qq, $qq) ? $data->by_qq->$qq->aid : false;
     }
 
     public function getQQId($aid) {
-        $data = json_decode(file_get_contents("./plugins/arcaea/accounts.json"));
+        $data = json_decode(file_get_contents($this->_datadir."/accounts.json"));
         return property_exists($data->by_qq, $aid) ? $data->by_qq->$aid->qq : false;
     }
 

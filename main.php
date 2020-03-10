@@ -1,8 +1,8 @@
 <?php
 print_r("Zapic's bot backend v0.0.1,Now loading libraries...\n");
-require_once "./libs/log4p.php";
-require_once "./libs/clientbot.php";
-require_once "./libs/cmdexplainer.php";
+require_once __DIR__."/libs/log4p.php";
+require_once __DIR__."/libs/clientbot.php";
+require_once __DIR__."/libs/cmdexplainer.php";
 class Main {
     private $_server;
     private $_config;
@@ -10,14 +10,16 @@ class Main {
     private $_plugins;
     private $_clients;
     private $_responds;
+    private $_botdir;
 
     /**
      * 构造函数,初始化服务器以及加载插件
      *
      */
     public function __construct() {
-        if (!file_exists("./config.json")) {
-            file_put_contents("./config.json", json_encode(["server_ip" => "0.0.0.0", "server_port" => 57901,"command_head"=>"/", "bot_token" => []]));
+        $this->_botdir = __DIR__;
+        if (!file_exists(__DIR__."/config.json")) {
+            file_put_contents(__DIR__."/config.json", json_encode(["server_ip" => "0.0.0.0", "server_port" => 57901,"command_head"=>"/", "bot_token" => []]));
         }
         $this->_logger = new log4p();
         $this->_logger->log("Now loading plugins...");
@@ -28,7 +30,7 @@ class Main {
             public $by_id = [];
             public $by_fd = [];
         };
-        $this->_config = json_decode(file_get_contents("./config.json"));
+        $this->_config = json_decode(file_get_contents(__DIR__."/config.json"));
         $this->_server = new Swoole\WebSocket\Server($this->_config->server_ip, $this->_config->server_port);
         $this->_server->on('open', function (Swoole\WebSocket\Server $server, $request) {
             $this->connectHandler($server, $request);
@@ -277,18 +279,21 @@ class Main {
      *
      */
     private function loadPlugins() {
-        if (!file_exists("./plugins")) {
-            mkdir("./plugins");
+        if (!file_exists(__DIR__."/data")) {
+            mkdir(__DIR__."/data");
+        }
+        if (!file_exists(__DIR__."/plugins")) {
+            mkdir(__DIR__."/plugins");
             $this->_plugins = [];
             return true;
         }
-        $plfiles = scandir("./plugins");
+        $plfiles = scandir(__DIR__."/plugins");
         $plugins = [];
         $_plugins = [];
         foreach ($plfiles as $plfile) {
             if (preg_match("/(.*)\.php$/", $plfile, $m)) {
                 try {
-                    include "./plugins/{$plfile}";
+                    include __DIR__."/plugins/{$plfile}";
                     $class = $m[1] . "_class";
                     if (!class_exists($class)) {
                         throw new Error("Invaild plugin.(Class Not Found)");
@@ -339,6 +344,10 @@ class Main {
 
     public function getClientByFD($fd){
         return $this->_clients->by_fd[$fd]['client'];
+    }
+
+    public function getMainDir(){
+        return $this->_botdir;
     }
 
     /**
