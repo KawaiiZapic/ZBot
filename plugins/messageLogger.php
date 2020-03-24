@@ -12,7 +12,7 @@ class messageLogger_class{
     public function onMessage($id,$msg){
         switch ($msg->message_type){
             case "private":
-                $this->_logger->log("[私聊][{$msg->user_id}({$msg->sender->nickname})] {$msg->message}");
+                $this->_logger->log("[私聊][{$msg->user_id}({$msg->sender->nickname})] {$msg->raw_message}");
             break;
 
             case "group":
